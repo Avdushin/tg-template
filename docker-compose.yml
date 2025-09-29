@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:15
+    container_name: tg_template_db
+    restart: always
+    environment:
+      POSTGRES_USER: tguser
+      POSTGRES_PASSWORD: tgpassword
+      POSTGRES_DB: tgdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tg_template_bot
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: ["./wait-for-db.sh", "db", "./bot"]
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+volumes:
+  pgdata:

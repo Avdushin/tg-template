@@ -1,0 +1,6 @@
+# folders
+bin/
+tmp/
+# files
+.env
+bot
