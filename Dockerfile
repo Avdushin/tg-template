@@ -1,18 +1,25 @@
-FROM golang:1.25.1-alpine AS builder
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-ENV GOPROXY=https://proxy.golang.org,direct
-
+# Скопировать модули и исходники
 COPY go.mod go.sum ./
-RUN go mod tidy
+RUN go mod download
 
-COPY . ./
-RUN go build -o bot ./cmd/bot
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bot ./cmd/bot
 
-FROM alpine:latest
+# Финальный образ
+FROM alpine:3.18
 WORKDIR /app
 COPY --from=builder /app/bot .
-COPY .env .env
+COPY scripts/wait-for-db.sh ./wait-for-db.sh
+RUN chmod +x ./wait-for-db.sh
 
-CMD ["./bot"]
+ENV DB_HOST=db
+ENV DB_PORT=5432
+ENV DB_USER=tguser
+ENV DB_PASSWORD=tgpassword
+ENV DB_NAME=tgdb
+
+CMD ["sh", "-c", "./wait-for-db.sh ${DB_HOST}:${DB_PORT} ./bot"]
