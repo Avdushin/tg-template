@@ -20,26 +20,24 @@ func NewBot(token string, debug bool) *Bot {
 	//@ Debug режим
 	botAPI.Debug = debug
 
-	//@ Инициализация всех команд
-	// commands.Init()
-
 	//@ Установка команд в меню Telegram
 	setCommandMenu(botAPI)
 
-	return &Bot{
-		API: botAPI,
-	}
+	return &Bot{API: botAPI}
 }
 
 func (b *Bot) Start() {
 	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	//? таймаут Long Polling с 60 до 5 секунд
+	u.Timeout = 5
 
 	updates := b.API.GetUpdatesChan(u)
 
 	for update := range updates {
 		if update.Message != nil {
 			go HandleMessage(b, update.Message)
+		} else if update.CallbackQuery != nil {
+			go HandleCallback(b, update.CallbackQuery)
 		}
 	}
 }
@@ -53,7 +51,6 @@ func setCommandMenu(botAPI *tgbotapi.BotAPI) {
 			Description: cmd.Description,
 		})
 	}
-
 	if _, err := botAPI.Request(tgbotapi.NewSetMyCommands(botCommands...)); err != nil {
 		log.Printf("Failed to set bot commands: %v", err)
 	}
