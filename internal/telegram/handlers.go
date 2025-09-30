@@ -8,7 +8,7 @@ import (
 
 func HandleMessage(bot *Bot, message *tgbotapi.Message) {
 	for _, cmd := range commands.AllCommands {
-		if message.Text == cmd.Name() {
+		if message.Text == cmd.Name {
 			cmd.Execute(bot.API, message)
 			return
 		}
