@@ -1,16 +1,17 @@
 package telegram
 
 import (
+	"tg-template/internal/telegram/commands"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func HandleMessage(bot *Bot, message *tgbotapi.Message) {
-	switch message.Text {
-	case "/start":
-		msg := tgbotapi.NewMessage(message.Chat.ID, "Welcome to the bot!")
-		bot.API.Send(msg)
-	default:
-		msg := tgbotapi.NewMessage(message.Chat.ID, "I don't understand that command.")
-		bot.API.Send(msg)
+	for _, cmd := range commands.AllCommands {
+		if message.Text == cmd.Name() {
+			cmd.Execute(bot.API, message)
+			return
+		}
 	}
+	bot.API.Send(tgbotapi.NewMessage(message.Chat.ID, "I don't understand that command."))
 }
