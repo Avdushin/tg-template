@@ -10,15 +10,19 @@ import (
 func init() {
 	Register(&Command{
 		Name:        "/ping",
-		Description: "Ping a host and show response time",
+		Description: "Ping a host and show response time. Example: /ping github.com`",
 		Execute: func(botAPI *tgbotapi.BotAPI, msg *tgbotapi.Message) {
-			args := strings.Fields(msg.Text) // разбиваем сообщение на слова
+			args := strings.Fields(msg.Text)
 			host := "google.com"
 			if len(args) > 1 {
-				host = args[1] // второй аргумент — это хост
+				host = args[1]
 			}
+
 			result := ping.PingHost(host)
-			botAPI.Send(tgbotapi.NewMessage(msg.Chat.ID, result))
+
+			// Отправляем результат с Markdown
+			msgConfig := tgbotapi.NewMessage(msg.Chat.ID, result)
+			botAPI.Send(msgConfig)
 		},
 	})
 }
