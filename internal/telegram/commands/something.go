@@ -2,6 +2,7 @@ package commands
 
 import (
 	"tg-template/internal/services/example"
+	"tg-template/internal/telegram/utils"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -15,7 +16,8 @@ func init() {
 			//? Пример использования стороннего сервиса
 			example.NewExampleService().DoSomething()
 			//@ Сообщение пользователю
-			botAPI.Send(tgbotapi.NewMessage(msg.Chat.ID, "Doing something"))
+			// botAPI.Send(tgbotapi.NewMessage(msg.Chat.ID, "Doing something"))
+			utils.SendHTML(botAPI, msg.Chat.ID, `<b>Doing something</b> ✅`)
 		},
 	})
 }
