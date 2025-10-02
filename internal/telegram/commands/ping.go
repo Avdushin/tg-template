@@ -10,7 +10,7 @@ import (
 func init() {
 	Register(&Command{
 		Name:        "/ping",
-		Description: "Ping a host and show response time. Example: /ping github.com`",
+		Description: "Ping a host and show response time. Example: `/ping github.com`",
 		Execute: func(botAPI *tgbotapi.BotAPI, msg *tgbotapi.Message) {
 			args := strings.Fields(msg.Text)
 			host := "google.com"
