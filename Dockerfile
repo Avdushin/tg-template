@@ -7,6 +7,6 @@ COPY go.mod go.sum ./
 RUN go mod tidy
 
 COPY . ./
-RUN go build -o bot ./cmd/bot
+RUN go build -o ./bin/bot ./cmd/bot
 
 CMD ["./bot"]

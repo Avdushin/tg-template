@@ -14,7 +14,7 @@ MODE ?= local
 run: build
 ifeq ($(MODE),local)
 	@echo "Running $(APP_NAME) locally..."
-	./$(APP_NAME)
+	./bin/$(APP_NAME)
 else ifeq ($(MODE),docker)
 	@echo "Running $(APP_NAME) in Docker..."
 	docker build -t $(DOCKER_IMAGE) .
@@ -31,7 +31,7 @@ endif
 # ----------------------------
 build:
 	@echo "Building $(APP_NAME)..."
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(APP_NAME) ./cmd/bot
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/$(APP_NAME) ./cmd/bot
 
 # ----------------------------
 # Режим live-reload через air
@@ -45,5 +45,5 @@ air:
 # ----------------------------
 clean:
 	@echo "Cleaning..."
-	rm -f $(APP_NAME)
+	rm -f bin/$(APP_NAME)
 	rm -rf tmp
